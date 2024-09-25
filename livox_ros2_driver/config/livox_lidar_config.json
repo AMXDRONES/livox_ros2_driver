@@ -14,8 +14,8 @@
     "timesync_config": {
         "enable_timesync": true,
         "device_name": "",
-        "comm_device_type": 2,
-        "baudrate_index": 0,
+        "comm_device_type": 0,
+        "baudrate_index": 2,
         "parity_index": 0     
     }
 }

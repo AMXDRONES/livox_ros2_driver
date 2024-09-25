@@ -379,7 +379,7 @@ uint32_t Lddc::PublishCustomPointcloud(LidarDataQueue *queue,
   livox_interfaces::msg::CustomMsg livox_msg;
   livox_msg.header.frame_id.assign(frame_id_);
   livox_msg.header.stamp = cur_node_->now();  // Use ROS time for synchronization
-  livox_msg.timebase = livox_msg.header.stamp.nanoseconds();  // Use ROS time as the base
+  livox_msg.timebase = livox_msg.header.stamp.sec * 1000000000ull + livox_msg.header.stamp.nanosec;  // Convert to nanoseconds
   livox_msg.point_num = 0;
   livox_msg.lidar_id = handle;
 
