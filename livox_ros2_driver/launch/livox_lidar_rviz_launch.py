@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 import launch
 
 ################### user configure parameters for ros2 start ###################
-xfer_format   = 1    # 0-Pointcloud2(PointXYZRTL), 1-customized pointcloud format
+xfer_format   = 0    # 0-Pointcloud2(PointXYZRTL), 1-customized pointcloud format
 multi_topic   = 0    # 0-All LiDARs share the same topic, 1-One LiDAR one topic
 data_src      = 0    # 0-lidar,1-hub
 publish_freq  = 10.0 # freqency of publish,1.0,2.0,5.0,10.0,etc
@@ -38,9 +38,29 @@ def generate_launch_description():
         executable='livox_ros2_driver_node',
         name='livox_lidar_publisher',
         output='screen',
-        parameters=livox_ros2_params
+        parameters=livox_ros2_params,
+        remappings=[
+                ('/livox/lidar', '/livox/lidar'),
+                ('/livox/time_reference', '/mavros/time_reference')
+            ]
+        )
+
+    livox_rviz = Node(
+            package='rviz2',
+            executable='rviz2',
+            output='screen',
+            arguments=['--display-config', rviz_config_path]
         )
 
     return LaunchDescription([
-        livox_driver
+        livox_driver,
+        livox_rviz,
+        # launch.actions.RegisterEventHandler(
+        #     event_handler=launch.event_handlers.OnProcessExit(
+        #         target_action=livox_rviz,
+        #         on_exit=[
+        #             launch.actions.EmitEvent(event=launch.events.Shutdown()),
+        #         ]
+        #     )
+        # )
     ])
