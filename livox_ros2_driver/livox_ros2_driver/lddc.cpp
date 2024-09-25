@@ -378,9 +378,8 @@ uint32_t Lddc::PublishCustomPointcloud(LidarDataQueue *queue,
 
   livox_interfaces::msg::CustomMsg livox_msg;
   livox_msg.header.frame_id.assign(frame_id_);
-  // livox_msg.header.seq = msg_seq;
-  // ++msg_seq;
-  livox_msg.timebase = 0;
+  livox_msg.header.stamp = cur_node_->now();  // Use ROS time for synchronization
+  livox_msg.timebase = livox_msg.header.stamp.nanoseconds();  // Use ROS time as the base
   livox_msg.point_num = 0;
   livox_msg.lidar_id = handle;
 
@@ -392,6 +391,8 @@ uint32_t Lddc::PublishCustomPointcloud(LidarDataQueue *queue,
   uint32_t published_packet = 0;
   uint32_t packet_offset_time = 0;  /** uint:ns */
   uint32_t is_zero_packet = 0;
+  uint64_t msg_start_time = livox_msg.timebase;
+
   while (published_packet < packet_num) {
     QueuePrePop(queue, &storage_packet);
     LivoxEthPacket *raw_packet =
@@ -408,15 +409,18 @@ uint32_t Lddc::PublishCustomPointcloud(LidarDataQueue *queue,
         is_zero_packet = 1;
       }
     }
-    /** first packet */
-    if (!published_packet) {
-      livox_msg.timebase = timestamp;
-      packet_offset_time = 0;
-      /** convert to ros time stamp */
-      livox_msg.header.stamp = rclcpp::Time(timestamp);
-    } else {
-      packet_offset_time = (uint32_t)(timestamp - livox_msg.timebase);
-    }
+    // /** first packet */
+    // if (!published_packet) {
+    //   livox_msg.timebase = timestamp;
+    //   packet_offset_time = 0;
+    //   /** convert to ros time stamp */
+    //   livox_msg.header.stamp = cur_node_->now();
+    // } else {
+    //   packet_offset_time = (uint32_t)(timestamp - livox_msg.timebase);
+    // }
+
+    packet_offset_time = (uint32_t)(timestamp - msg_start_time);
+
     uint32_t single_point_num = storage_packet.point_num * echo_num;
 
     if (kSourceLvxFile != data_source) {
