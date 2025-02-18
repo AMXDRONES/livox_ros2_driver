@@ -1,7 +1,7 @@
 {
 	"lidar_config": [
 		{
-			"broadcast_code": "0TFDH690065GPG1",
+			"broadcast_code": "3JEDM6K00178301",
 			"enable_connect": true,
 			"enable_fan": true,
 			"return_mode": 0,
@@ -12,7 +12,7 @@
 	],
 
 	"timesync_config": {
-		"enable_timesync": true,
+		"enable_timesync": false,
 		"device_name": "",
 		"comm_device_type": 2,
 		"baudrate_index": 0,
