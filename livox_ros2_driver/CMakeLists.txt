@@ -40,7 +40,7 @@ if (APR_FOUND)
 endif (APR_FOUND)
 
 ## make sure the livox_sdk_static library is installed
-find_library(LIVOX_SDK_LIBRARY liblivox_sdk_static.a /usr/local/lib)
+find_library(LIVOX_SDK_LIBRARY liblivox_lidar_sdk_shared.so /usr/local/lib)
 
 ## PCL library
 link_directories(${PCL_LIBRARY_DIRS})
@@ -84,7 +84,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 # link libraries
 target_link_libraries(${PROJECT_NAME}
-	${livox_sdk_LIBRARIES}
+	${LIVOX_SDK_LIBRARY}
 	${Boost_LIBRARY}
 	${PCL_LIBRARIES}
 	${APR_LIBRARIES}
